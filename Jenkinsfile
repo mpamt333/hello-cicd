@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout Source') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/vinhpn12/hello-cicd.git'
+                    url: 'https://github.com/mpamt333/hello-cicd.git'
             }
         }
 
