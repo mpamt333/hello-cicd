@@ -14,16 +14,17 @@ pipeline {
             steps {
                 script {
                     def commitSha = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                    def tagName = "myapp:${commitSha}"
+                    def repoName = "vinhpn12/"
+		    def tagName = "hello-cicd:${commitSha}"
                     
                     echo "Building image with Tag: ${tagName}"
                     
-                    def builtImage = docker.build tagName, '.' 
+                    def builtImage = docker.build "${repoName}:${tagName}", '.' 
                     
                     docker.withRegistry('https://docker.io', 'docker-hub-credentials-id') { 
                         builtImage.push()
                     }
-                    echo "Successfully pushed image: ${tagName} to Registry."
+                    echo "Successfully pushed image: ${tagName} to Registry ${repoName}."
                 }
             }
         }
