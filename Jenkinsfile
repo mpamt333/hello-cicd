@@ -1,27 +1,43 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_REPO = "vinhpn12/hello-cicd"
+    }
+
     stages {
         stage('Checkout Source') {
             steps {
                 git branch: 'main',
-		    credentialsId: 'bf91c801-918d-4864-b770-ecc1d59f8cd6',
+                    credentialsId: 'github-credential-id',
                     url: 'https://github.com/mpamt333/hello-cicd.git'
             }
         }
 
-	stage('Build & Push Docker Image') {
+        stage('Build & Push Docker Image') {
             steps {
                 script {
-                    def commitSha = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                    def fullImageRepoName = "vinhpn12/hello-cicd"
-                    def finalTagName = "${fullImageRepoName}:${commitSha}" 
-                    echo "Building image with Tag: ${finalTagName}"
-                    def builtImage = docker.build "${finalTagName}", '.'
-                    docker.withRegistry('https://docker.io', 'docker-hub-credentials-id') {
-                        builtImage.push()
+                    def commitSha = sh(
+                        script: 'git rev-parse --short HEAD',
+                        returnStdout: true
+                    ).trim()
+
+                    def imageTag = "${IMAGE_REPO}:${commitSha}"
+                    echo "Building Docker image: ${imageTag}"
+
+                    withCredentials([usernamePassword(
+                        credentialsId: 'docker-hub-credentials-id',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )]) {
+                        sh """
+                          docker build -t ${imageTag} .
+                          echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
+                          docker push ${imageTag}
+                        """
                     }
-                    echo "Successfully pushed image: ${finalTagName} to Docker Hub."
+
+                    echo "Successfully pushed image: ${imageTag}"
                 }
             }
         }
