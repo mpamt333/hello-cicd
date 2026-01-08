@@ -11,7 +11,15 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t hello-cicd:latest .'
+		script {
+			def commitSha = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+			def tagName = "myapp:${commitSha}"
+			echo "Building image with Tag: ${tagName}"
+			docker.build -t tagName .
+			#docker.withRegistry('https://', 'docker-credentials-id') {
+			#docker.image(tagName).push()
+		}
+			#sh 'docker build -t hello-cicd:latest .'
             }
         }
     }
