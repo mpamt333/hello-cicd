@@ -18,7 +18,7 @@ pipeline {
 			docker.build -t tagName .
 			#docker.withRegistry('https://', 'docker-credentials-id') {
 			#docker.image(tagName).push()
-		}
+		#}
 			#sh 'docker build -t hello-cicd:latest .'
             }
         }
