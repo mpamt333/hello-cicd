@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout Source') {
             steps {
                 git branch: 'main',
-		    credentialsId: 'bf91c801-918d-4864-b770-ecc1d59f8cd6'
+		    credentialsId: 'bf91c801-918d-4864-b770-ecc1d59f8cd6',
                     url: 'https://github.com/mpamt333/hello-cicd.git'
             }
         }
