@@ -5,7 +5,6 @@ pipeline {
         stage('Checkout Source') {
             steps {
                 git branch: 'main',
-                    credentialsId: 'token-master-pn12', // Dùng PAT cho GitHub
                     url: 'https://github.com/mpamt333/hello-cicd.git'
             }
         }
